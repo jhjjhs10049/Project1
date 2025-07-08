@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/common}"
+>
+  <head>
+    <title>페이지를 찾을 수 없습니다</title>
+    <style>
+      .error-container {
+        text-align: center;
+        padding: 50px 20px;
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .error-code {
+        font-size: 8rem;
+        font-weight: bold;
+        color: #dc3545;
+        margin-bottom: 20px;
+      }
+      .error-message {
+        font-size: 1.5rem;
+        color: #6c757d;
+        margin-bottom: 30px;
+      }
+      .error-details {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        max-width: 600px;
+      }
+      .btn-home {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div layout:fragment="content">
+      <div class="error-container">
+        <div class="error-code">404</div>
+        <div class="error-message">페이지를 찾을 수 없습니다</div>
+
+        <div class="error-details" th:if="${requestUri}">
+          <h5>요청한 경로:</h5>
+          <code th:text="${requestUri}"></code>
+        </div>
+
+        <p class="text-muted mb-4">
+          요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.<br />
+          URL을 다시 확인해 주세요.
+        </p>
+
+        <div>
+          <a href="/main" class="btn btn-primary btn-home">
+            <i class="fas fa-home me-2"></i>메인 페이지로 돌아가기
+          </a>
+          <a
+            href="javascript:history.back()"
+            class="btn btn-outline-secondary ms-2"
+          >
+            <i class="fas fa-arrow-left me-2"></i>이전 페이지
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

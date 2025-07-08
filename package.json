@@ -1,0 +1,14 @@
+{
+  "name": "b01-spring-boot-app",
+  "version": "1.0.0",
+  "description": "Spring Boot Application with npm dev script",
+  "scripts": {
+    "dev": "gradlew.bat bootRun",
+    "start": "gradlew.bat bootRun",
+    "build": "gradlew.bat build",
+    "clean": "gradlew.bat clean"
+  },
+  "keywords": ["spring-boot", "java", "gradle"],
+  "author": "",
+  "license": "ISC"
+}

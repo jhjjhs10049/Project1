@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layout/common}"
+>
+  <head>
+    <title>서버 오류</title>
+    <style>
+      .error-container {
+        text-align: center;
+        padding: 50px 20px;
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .error-code {
+        font-size: 8rem;
+        font-weight: bold;
+        color: #dc3545;
+        margin-bottom: 20px;
+      }
+      .error-message {
+        font-size: 1.5rem;
+        color: #6c757d;
+        margin-bottom: 30px;
+      }
+      .error-details {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        max-width: 800px;
+        text-align: left;
+      }
+      .btn-home {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+      }
+      .exception-details {
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 15px;
+        font-family: monospace;
+        font-size: 0.9rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div layout:fragment="content">
+      <div class="error-container">
+        <div class="error-code">500</div>
+        <div class="error-message">서버 내부 오류가 발생했습니다</div>
+
+        <div class="error-details">
+          <h5>오류 정보:</h5>
+          <div th:if="${requestUri}">
+            <strong>요청 경로:</strong> <code th:text="${requestUri}"></code>
+          </div>
+          <div th:if="${detailMessage}">
+            <strong>오류 메시지:</strong>
+            <span th:text="${detailMessage}"></span>
+          </div>
+
+          <div th:if="${exception}" class="exception-details">
+            <strong>예외 상세:</strong><br />
+            <span th:text="${exception}"></span>
+          </div>
+        </div>
+
+        <p class="text-muted mb-4">
+          서버에서 예상치 못한 오류가 발생했습니다.<br />
+          문제가 지속될 경우 관리자에게 문의해 주세요.
+        </p>
+
+        <div>
+          <a href="/main" class="btn btn-primary btn-home">
+            <i class="fas fa-home me-2"></i>메인 페이지로 돌아가기
+          </a>
+          <a
+            href="javascript:history.back()"
+            class="btn btn-outline-secondary ms-2"
+          >
+            <i class="fas fa-arrow-left me-2"></i>이전 페이지
+          </a>
+          <button class="btn btn-outline-info ms-2" onclick="location.reload()">
+            <i class="fas fa-redo me-2"></i>새로고침
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

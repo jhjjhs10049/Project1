@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/common}">
+
+<head>
+    <title>게시판</title>
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/board/list.css}">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="board-container">
+            <!-- 게시판 헤더 -->
+            <div class="board-header text-center">
+                <div class="container">
+                    <h1 class="display-5 mb-4">게시판</h1>
+                    <p class="lead text-muted">자유롭게 소통할 수 있는 공간입니다</p>
+                </div>
+            </div>
+
+            <!-- 검색 섹션 -->
+            <div class="search-section">
+                <form action="/board/list" method="get">
+                    <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label fw-bold">검색 조건</label>
+                            <select class="form-select" name="type">
+                                <option value="">전체</option>
+                                <option value="t" th:selected="${pageRequestDTO.type =='t'}">제목</option>
+                                <option value="c" th:selected="${pageRequestDTO.type =='c'}">내용</option>
+                                <option value="w" th:selected="${pageRequestDTO.type =='w'}">작성자</option>
+                                <option value="tc" th:selected="${pageRequestDTO.type =='tc'}">제목+내용</option>
+                                <option value="tcw" th:selected="${pageRequestDTO.type =='tcw'}">제목+내용+작성자</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">검색어</label>
+                            <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}"
+                                placeholder="검색어를 입력하세요">
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary searchBtn" type="submit">
+                                    <i class="fas fa-search me-2"></i>검색
+                                </button>
+                                <button class="btn btn-outline-secondary clearBtn" type="button">
+                                    <i class="fas fa-times me-2"></i>초기화
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- 게시글 작성 버튼 -->
+            <div class="d-flex justify-content-between align-items-center mb-4 board-actions">
+                <h5 class="mb-0 board-list-title">
+                    <i class="fas fa-list me-2"></i>게시글 목록
+                </h5>
+                <a href="/board/register" class="btn btn-primary btn-lg">
+                    <i class="fas fa-pen me-2"></i>글쓰기
+                </a>
+            </div>
+
+            <!-- 게시판 테이블 -->
+            <div class="board-table">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col-number">번호</th>
+                            <th scope="col">제목</th>
+                            <th scope="col" class="col-writer">작성자</th>
+                            <th scope="col" class="col-date">작성일</th>
+                        </tr>
+                    </thead>
+                    <tbody th:with="link = ${pageRequestDTO.getLink()}">
+                        <tr th:each="dto:${responseDTO.dtoList}">
+                            <td class="text-center fw-bold text-muted">[[${dto.bno}]]</td>
+                            <td>
+                                <a th:href="|@{/board/read(bno =${dto.bno})}&${link}|" class="post-title">
+                                    [[${dto.title}]]
+                                </a>
+                                <span th:if="${dto.replyCount > 0}" class="reply-badge">
+                                    <i class="fas fa-comment me-1"></i>[[${dto.replyCount}]]
+                                </span>
+                                <div th:if="${dto.boardImages != null && dto.boardImages.size() > 0}" class="mt-2">
+                                    <img th:each="boardImage: ${dto.boardImages}"
+                                        th:src="|/view/s_${boardImage.uuid}_${boardImage.fileName}|"
+                                        class="image-preview" alt="첨부 이미지">
+                                </div>
+                            </td>
+                            <td class="text-center">[[${dto.writer}]]</td>
+                            <td class="text-center text-muted">[[${#temporals.format(dto.regDate, 'MM-dd')}]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="d-flex justify-content-center mt-4 pagination-container">
+                <ul class="pagination">
+                    <li class="page-item" th:if="${responseDTO.prev}">
+                        <a class="page-link" th:data-num="${responseDTO.start -1}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+
+                    <th:block th:each="i: ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+                        <li th:class="${responseDTO.page == i}?'page-item active':'page-item'">
+                            <a class="page-link" th:data-num="${i}">[[${i}]]</a>
+                        </li>
+                    </th:block>
+
+                    <li class="page-item" th:if="${responseDTO.next}">
+                        <a class="page-link" th:data-num="${responseDTO.end + 1}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 알림 모달 -->
+            <div class="modal fade" id="resultModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-check-circle text-success me-2"></i>알림
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0">작업이 완료되었습니다.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <th:block layout:fragment="script">
+            <script>
+                // 페이지네이션 클릭 처리
+                document.addEventListener('DOMContentLoaded', function () {
+                    // 페이지네이션 링크 클릭 이벤트
+                    const pageLinks = document.querySelectorAll('.pagination .page-link');
+                    pageLinks.forEach(link => {
+                        link.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const pageNum = this.getAttribute('data-num');
+                            if (pageNum && !isNaN(pageNum)) {
+                                // 현재 검색 조건 유지
+                                const form = document.querySelector('form[action="/board/list"]');
+                                const formData = new FormData(form);
+
+                                // URL 생성
+                                const url = new URL('/board/list', window.location.origin);
+                                url.searchParams.set('page', pageNum);
+
+                                // 기존 검색 조건들 추가
+                                if (formData.get('type')) {
+                                    url.searchParams.set('type', formData.get('type'));
+                                }
+                                if (formData.get('keyword')) {
+                                    url.searchParams.set('keyword', formData.get('keyword'));
+                                }
+                                if (formData.get('size')) {
+                                    url.searchParams.set('size', formData.get('size'));
+                                }
+
+                                window.location.href = url.toString();
+                            }
+                        });
+                    });
+
+                    // 검색 초기화 버튼 클릭 이벤트
+                    const clearBtn = document.querySelector('.clearBtn');
+                    if (clearBtn) {
+                        clearBtn.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            // 검색 폼 초기화
+                            const form = this.closest('form');
+                            if (form) {
+                                form.reset();
+                            }
+                            // 페이지를 1로 리셋하고 검색 조건 제거
+                            window.location.href = '/board/list?page=1&size=10';
+                        });
+                    }
+
+                    // 알림 모달 처리
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const result = urlParams.get('result');
+                    if (result && typeof bootstrap !== 'undefined') {
+                        const modalElement = document.getElementById('resultModal');
+                        if (modalElement) {
+                            const modal = new bootstrap.Modal(modalElement);
+                            modal.show();
+                        }
+                    }
+                });
+            </script>
+        </th:block>
+    </div>
+</body>
+
+</html>

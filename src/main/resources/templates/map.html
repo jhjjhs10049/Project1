@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/common}">
+
+<head>
+    <title>지도</title>
+
+    <th:block layout:fragment="css">
+        <!-- Map CSS -->
+        <link th:href="@{/css/map.css}" rel="stylesheet">
+    </th:block>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="map-section">
+        <div class="container">
+            <div class="page-header">
+                <h1 class="display-5 mb-4">지도</h1>
+                <p class="lead text-muted">의미 있는 장소들을 지도로 확인해보세요</p>
+            </div>
+            <div class="map-content">
+                <div class="map-placeholder">
+                    <div id="map" style="width:100%; height:840px;"></div>
+
+
+
+                    <!-- 카카오맵 스크립트 -->
+                    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=686b28177320795969ece839587aa9a4"></script>
+                    <script>
+                        kakao.maps.load(function() {
+                            const container = document.getElementById('map');
+                            const options = {
+                                center: new kakao.maps.LatLng(35.82092244022092, 128.54810328624347),
+                                level: 3
+                            };
+
+                            const map = new kakao.maps.Map(container, options);
+
+
+
+
+    // ============ 오버레이 1 ============
+
+    const marker1 = new kakao.maps.Marker({
+        map: map,
+        position: new kakao.maps.LatLng(35.82092244022092, 128.54810328624347)
+    });
+
+    const overlay1 = new kakao.maps.CustomOverlay({
+        content: "", // 초기값 비움
+        position: marker1.getPosition(),
+        map: null
+    });
+
+    kakao.maps.event.addListener(marker1, 'click', function () {
+        overlay1.setContent(`
+            <div class="wrap">
+                <div class="info">
+                    <div class="title">
+                        거주지
+                        <div class="close" onclick="closeOverlay1()" title="닫기"></div>
+                    </div>
+                    <div class="body">
+                        <div class="img">
+                            <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="73" height="70">
+                        </div>
+                        <div class="desc">
+                            <div class="ellipsis">대구광역시 송현로 7길 9</div>
+                            <div class="jibun ellipsis">(우) 42803</div>
+                            <div class="jibun ellipsis">(지번) 대구 달서구 상인동 1596</div>
+                            <div>현재 거주하고 있는 곳입니다.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        overlay1.setMap(map);
+    });
+
+    window.closeOverlay1 = function () {
+        overlay1.setMap(null);
+    };
+
+    // ============ 오버레이 2 ============
+
+    const marker2 = new kakao.maps.Marker({
+        map: map,
+        position: new kakao.maps.LatLng(35.82198728795498, 128.54238131265728)
+    });
+
+    const overlay2 = new kakao.maps.CustomOverlay({
+        content: "",
+        position: marker2.getPosition(),
+        map: null
+    });
+
+    kakao.maps.event.addListener(marker2, 'click', function () {
+        overlay2.setContent(`
+            <div class="wrap">
+                <div class="info">
+                    <div class="title">
+                        경북기계공업고등학교
+                        <div class="close" onclick="closeOverlay2()" title="닫기"></div>
+                    </div>
+                    <div class="body">
+                        <div class="img">
+                            <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="73" height="70">
+                        </div>
+                        <div class="desc">
+                            <div class="ellipsis">대구 달서구 월배로 275</div>
+                            <div class="jibun ellipsis">(우) 42748</div>
+                            <div class="jibun ellipsis">(지번) 상인동 1-6</div>
+                            <div>졸업한 고등학교입니다.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+        overlay2.setMap(map);
+    });
+
+    window.closeOverlay2 = function () {
+        overlay2.setMap(null);
+    };
+});
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

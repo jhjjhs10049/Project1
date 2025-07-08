@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6" layout:decorate="~{layout/common}">
+
+<head>
+    <title>게시글 보기</title>
+
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/board/read.css}">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="board-container">
+            <!-- 게시글 보기 헤더 -->
+            <div class="board-header text-center">
+                <div class="container">
+                    <h1 class="display-5 mb-4">게시글 보기</h1>
+                    <p class="lead text-muted">게시글 상세 내용을 확인하세요</p>
+                </div>
+            </div>
+            <!-- 게시글 내용 -->
+            <div class="post-content">
+                <!-- 게시글 메타 정보 -->
+                <div class="post-meta">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <strong><i class="fas fa-hashtag me-2"></i>번호</strong>
+                            <p class="mb-0 mt-1">[[${dto.bno}]]</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong><i class="fas fa-user me-2"></i>작성자</strong>
+                            <p class="mb-0 mt-1">[[${dto.writer}]]</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong><i class="fas fa-calendar me-2"></i>작성일</strong>
+                            <p class="mb-0 mt-1">[[${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm')}]]</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong><i class="fas fa-clock me-2"></i>수정일</strong>
+                            <p class="mb-0 mt-1">[[${#temporals.format(dto.modDate, 'yyyy-MM-dd HH:mm')}]]</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 게시글 제목 -->
+                <h2 class="post-title">[[${dto.title}]]</h2>
+
+                <!-- 게시글 내용 -->
+                <div class="post-text">[[${dto.content}]]</div>
+                <!-- 액션 버튼 -->
+                <div class="action-buttons">
+                    <div>
+                        <a th:href="|@{/board/list}?${pageRequestDTO.getLink()}|" class="btn btn-action btn-list">
+                            <i class="fas fa-list me-2"></i>목록으로
+                        </a>
+                    </div>
+                    <div>
+                        <span sec:authorize="isAuthenticated()" th:if="${#authentication.name == dto.writer}">
+                            <a th:href="|@{/board/modify(bno=${dto.bno})}&${pageRequestDTO.getLink()}|"
+                                class="btn btn-action btn-modify me-2">
+                                <i class="fas fa-edit me-2"></i>수정
+                            </a>
+                        </span>
+                        <span th:if="${canDelete}">
+                            <button class="btn btn-action btn-delete" onclick="deletePost()">
+                                <i class="fas fa-trash me-2"></i>삭제
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- 첨부 이미지 -->
+            <div class="image-gallery" th:if="${dto.fileNames != null && dto.fileNames.size() > 0}">
+                <h5 class="mb-4"><i class="fas fa-images me-2"></i>첨부 이미지</h5>
+                <div class="text-center">
+                    <img th:each="fileName: ${dto.fileNames}" th:src="|/view/${fileName}|" class="img-fluid file-image"
+                        th:data-filename="${fileName}" onclick="openImageModal(this.src)">
+                </div>
+            </div>
+            <!-- 댓글 섹션 -->
+            <div class="reply-section">
+                <div class="reply-header">
+                    <h5 class="mb-0"><i class="fas fa-comments me-2"></i>댓글</h5>
+                    <button class="btn btn-add-reply addReplyBtn" sec:authorize="isAuthenticated()">
+                        <i class="fas fa-plus me-2"></i>댓글 작성
+                    </button>
+                </div>
+                <ul class="list-unstyled replyList">
+                    <!-- 댓글 목록이 여기에 동적으로 추가됩니다 -->
+                </ul>
+                <div class="d-flex justify-content-center mt-4">
+                    <ul class="pagination replyPaging">
+                        <!-- 댓글 페이징이 여기에 동적으로 추가됩니다 -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 댓글 작성/수정 모달 -->
+        <div class="modal fade registerModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">댓글 작성</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">댓글 내용</label>
+                            <textarea class="form-control" rows="5" placeholder="댓글을 입력하세요"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">작성자</label>
+                            <input type="text" class="form-control"
+                                th:value="${#authentication.name != null and #authentication.name != 'anonymousUser' ? #authentication.name : ''}"
+                                readonly>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-primary replyRegBtn">등록</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 댓글 수정 모달 -->
+        <div class="modal fade modifyModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">댓글 수정</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">댓글 내용</label>
+                            <textarea class="form-control" rows="5"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">작성자</label>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger replyRemoveBtn">삭제</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-primary replyModBtn">수정</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 이미지 확대 모달 -->
+        <div class="modal fade imageModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">이미지 보기</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>                    </div>
+                    <div class="modal-body text-center">
+                        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="img-fluid" id="modalImage">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 삭제용 숨겨진 폼 -->
+        <form id="deleteForm" method="POST" action="/board/remove" style="display:none;">
+            <input type="hidden" name="bno" th:value="${dto.bno}">
+            <input type="hidden" name="writer" th:value="${dto.writer}">
+            <th:block th:if="${dto.fileNames != null}">
+                <input type="hidden" name="fileNames" th:each="fileName: ${dto.fileNames}" th:value="${fileName}">
+            </th:block>
+        </form>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script th:src="@{/js/reply.js}"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            const bno = /*[[${dto.bno}]]*/ 0;
+            const replyer = /*[[${#authentication.name != null and #authentication.name != 'anonymousUser' ? #authentication.name : ''}]]*/ '';
+            /*]]>*/
+
+            // 댓글 관련 함수들
+            const replyList = document.querySelector('.replyList');
+            const replyPaging = document.querySelector('.replyPaging');
+
+            // 페이지 로딩 시 댓글 목록 불러오기
+            function printReplies(dtoList) {
+                let str = '';
+                if (dtoList && dtoList.length > 0) {
+                    for (const dto of dtoList) {
+                        str += `<li class="reply-item" data-rno="${dto.rno}">
+                            <div class="reply-meta">
+                                <div>
+                                    <strong>${dto.replier}</strong>
+                                    <span class="ms-3">${formatDate(dto.regDate)}</span>
+                                </div>                                <div>
+                                    ${dto.replier === replyer ?
+                                '<button class="btn btn-sm btn-outline-primary modifyBtn me-2">수정</button><button class="btn btn-sm btn-outline-danger deleteReplyBtn">삭제</button>' : 
+                                (replyer && replyer !== '' ? '<button class="btn btn-sm btn-outline-danger deleteReplyBtn">삭제</button>' : '')}
+                                </div>
+                            </div>
+                            <div class="reply-text">${dto.replyText}</div>
+                        </li>`;
+                    }
+                } else {
+                    str = '<li class="text-center text-muted py-3">등록된 댓글이 없습니다.</li>';
+                }
+                replyList.innerHTML = str;
+            }
+
+            // 댓글 페이징 처리
+            function printPages(data) {
+                let pageStr = '';
+                if (data.prev) {
+                    pageStr += `<li class="page-item">
+                        <a class="page-link" data-page="${data.start - 1}">이전</a>
+                    </li>`;
+                }
+
+                for (let i = data.start; i <= data.end; i++) {
+                    pageStr += `<li class="page-item ${data.page === i ? 'active' : ''}">
+                        <a class="page-link" data-page="${i}">${i}</a>
+                    </li>`;
+                }
+
+                if (data.next) {
+                    pageStr += `<li class="page-item">
+                        <a class="page-link" data-page="${data.end + 1}">다음</a>
+                    </li>`;
+                }
+
+                replyPaging.innerHTML = pageStr;
+            }
+
+            // 날짜 포맷팅
+            function formatDate(date) {
+                const d = new Date(date);
+                return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+            }
+
+            // 댓글 목록 불러오기
+            function loadReplies(page = 1) {
+                getList({ bno: bno, page: page })
+                    .then(data => {
+                        printReplies(data.dtoList);
+                        printPages(data);
+                    })
+                    .catch(e => console.log(e));
+            }
+
+            // 이미지 모달 열기
+            function openImageModal(src) {
+                document.getElementById('modalImage').src = src;
+                new bootstrap.Modal(document.querySelector('.imageModal')).show();
+            }            // 게시글 삭제
+            function deletePost() {
+                console.log('deletePost 함수 호출됨'); // 디버깅용
+                if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+                    console.log('사용자가 삭제를 확인함'); // 디버깅용
+                    const deleteForm = document.getElementById('deleteForm');
+                    if (deleteForm) {
+                        console.log('삭제 폼을 찾았음, 제출 중...'); // 디버깅용
+                        deleteForm.submit();
+                    } else {
+                        console.error('삭제 폼을 찾을 수 없음'); // 디버깅용
+                    }
+                }
+            }
+
+            // 페이지 로드 시 댓글 불러오기
+            loadReplies();            // 댓글 관련 이벤트 처리
+            const addReplyBtn = document.querySelector('.addReplyBtn');
+            if (addReplyBtn) {
+                addReplyBtn.addEventListener('click', function () {
+                    new bootstrap.Modal(document.querySelector('.registerModal')).show();
+                });
+            }
+
+            // 댓글 페이징 클릭 이벤트
+            replyPaging.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = e.target;
+                if (target.tagName === 'A') {
+                    const page = target.getAttribute('data-page');
+                    loadReplies(page);
+                }            });            // 댓글 수정 버튼 클릭 이벤트
+            replyList.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = e.target;
+                if (target.classList.contains('modifyBtn')) {
+                    const rno = target.closest('li').getAttribute('data-rno');
+
+                    // 기존 댓글 정보 가져오기
+                    getReply(rno)
+                        .then(reply => {
+                            // 수정 모달에 기존 데이터 입력
+                            document.querySelector('.modifyModal textarea').value = reply.replyText;
+                            document.querySelector('.modifyModal input[type="text"]').value = reply.replier;
+                            document.querySelector('.modifyModal').setAttribute('data-rno', rno);
+
+                            // 댓글 수정 모달 열기
+                            new bootstrap.Modal(document.querySelector('.modifyModal')).show();
+                        })
+                        .catch(error => {
+                            console.error('댓글 정보 가져오기 실패:', error);
+                            alert('댓글 정보를 가져올 수 없습니다.');
+                        });
+                }
+                // 댓글 삭제 버튼 클릭 이벤트
+                if (target.classList.contains('deleteReplyBtn')) {
+                    const rno = target.closest('li').getAttribute('data-rno');
+                    
+                    if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+                        removeReply(rno)
+                            .then(result => {
+                                console.log('댓글 삭제 성공:', result);
+                                // 댓글 목록 새로고침
+                                loadReplies();
+                            })
+                            .catch(error => {
+                                console.error('댓글 삭제 실패:', error);
+                                alert('댓글 삭제에 실패했습니다.');
+                            });
+                    }
+                }
+            });
+
+            // 댓글 등록 버튼 이벤트
+            const replyRegBtn = document.querySelector('.replyRegBtn');
+            if (replyRegBtn) {
+                replyRegBtn.addEventListener('click', function () {
+                    const replyText = document.querySelector('.registerModal textarea').value;
+
+                    console.log('댓글 등록 시도:', { replyText, replyer, bno }); // 디버깅
+
+                    if (!replyText.trim()) {
+                        alert('댓글 내용을 입력해주세요.');
+                        return;
+                    }
+
+                    if (!replyer) {
+                        alert('로그인이 필요합니다.');
+                        return;
+                    }
+
+                    const replyObj = {
+                        bno: bno,
+                        replyText: replyText,
+                        replier: replyer
+                    };
+
+                    console.log('전송할 댓글 객체:', replyObj); // 디버깅
+
+                    addReply(replyObj)
+                        .then(result => {
+                            console.log('댓글 등록 성공:', result);
+                            // 모달 닫기
+                            bootstrap.Modal.getInstance(document.querySelector('.registerModal')).hide();
+                            // 댓글 입력창 초기화
+                            document.querySelector('.registerModal textarea').value = '';
+                            // 댓글 목록 새로고침
+                            loadReplies(1);
+                        })
+                        .catch(error => {
+                            console.error('댓글 등록 실패:', error);
+                            console.error('에러 상세:', error);
+                            if (error.response) {
+                                console.error('에러 응답 상태:', error.response.status);
+                                console.error('에러 응답 데이터:', error.response.data);
+                            }
+                            alert('댓글 등록에 실패했습니다. 콘솔을 확인해주세요.');
+                        });
+                });
+            }
+
+            // 댓글 수정 확인 버튼 이벤트
+            const replyModBtn = document.querySelector('.replyModBtn');
+            if (replyModBtn) {
+                replyModBtn.addEventListener('click', function () {
+                    const rno = document.querySelector('.modifyModal').getAttribute('data-rno');
+                    const replyText = document.querySelector('.modifyModal textarea').value;
+                    const replier = document.querySelector('.modifyModal input[type="text"]').value;
+
+                    if (!replyText.trim()) {
+                        alert('댓글 내용을 입력해주세요.');
+                        return;
+                    }
+
+                    const replyObj = {
+                        rno: rno,
+                        replyText: replyText,
+                        replier: replier,
+                        bno: bno
+                    };
+
+                    modifyReply(replyObj)
+                        .then(result => {
+                            console.log('댓글 수정 성공:', result);
+                            // 모달 닫기
+                            bootstrap.Modal.getInstance(document.querySelector('.modifyModal')).hide();
+                            // 댓글 목록 새로고침
+                            loadReplies();
+                        })
+                        .catch(error => {
+                            console.error('댓글 수정 실패:', error);
+                            alert('댓글 수정에 실패했습니다.');
+                        });
+                });
+            }
+
+            // 댓글 삭제 버튼 이벤트
+            const replyRemoveBtn = document.querySelector('.replyRemoveBtn');
+            if (replyRemoveBtn) {
+                replyRemoveBtn.addEventListener('click', function () {
+                    const rno = document.querySelector('.modifyModal').getAttribute('data-rno');
+
+                    if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
+                        removeReply(rno)
+                            .then(result => {
+                                console.log('댓글 삭제 성공:', result);
+                                // 모달 닫기
+                                bootstrap.Modal.getInstance(document.querySelector('.modifyModal')).hide();
+                                // 댓글 목록 새로고침
+                                loadReplies();
+                            })
+                            .catch(error => {
+                                console.error('댓글 삭제 실패:', error);
+                                alert('댓글 삭제에 실패했습니다.');
+                            });
+                    }
+                });
+            }
+        </script>
+    </th:block>
+</body>
+
+</html>

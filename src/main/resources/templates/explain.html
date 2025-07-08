@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/common}">
+
+<head>
+    <title>홈페이지 설명</title>
+
+    <th:block layout:fragment="css">
+        <!-- Explain CSS -->
+        <link th:href="@{/css/explain.css}" rel="stylesheet">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content">
+
+        <div class="explain-section">
+            <div class="container">
+                <div class="page-title">
+                    <h1 class="display-5 mb-4">홈페이지 설명</h1>
+                    <p class="lead text-muted">각 메뉴의 기능과 특징을 자세히 알아보세요</p>
+                    <div class="alert alert-info mt-4 responsive-notice"
+                        style="background-color: #e3f2fd; border-radius: 10px; color: #1976d2; border: 1px solid #90caf9;">
+                        <i class="fas fa-mobile-alt me-2"></i>
+                        <strong>💡 반응형 동적 효과가 적용되어 있습니다. 브라우저 창 크기를 조절해보세요!</strong>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="feature-card">
+                            <div class="text-center">
+                                <div class="feature-icon">👤</div>
+                                <h4 class="mb-3">자기소개</h4>
+                                <p class="text-muted">개인 소개 및 자격 사항을 기술하였습니다.</p>
+                                <p class="text-muted">(해당 내용은 로그인 후 확인하실 수 있습니다.)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6">
+                        <div class="feature-card">
+                            <div class="text-center">
+                                <div class="feature-icon">📋</div>
+                                <h4 class="mb-3">약력</h4>
+                                <p class="text-muted">학력과 경력 등 지금까지의 이력이 담겨 있습니다.</p>
+                                <p class="text-muted">(해당 내용은 로그인 후 확인하실 수 있습니다.)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6">
+                        <div class="feature-card">
+                            <div class="text-center">
+                                <div class="feature-icon">🗺️</div>
+                                <h4 class="mb-3">지도</h4>
+                                <p class="text-muted">카카오맵 오픈API를 활용하여 의미 있는 장소들을 지도에 표시하였습니다.</p>
+                                <p class="text-muted">(해당 내용은 로그인 후 확인하실 수 있습니다.)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6">
+                        <div class="feature-card">
+                            <div class="text-center">
+                                <div class="feature-icon">💬</div>
+                                <h4 class="mb-3">게시판</h4>
+                                <p class="text-muted">간단한 게시글 작성과 조회가 가능한 기본 게시판 입니다.</p>
+                                <p class="text-muted">(게시글 작성,수정,삭제는 로그인 후 가능합니다.)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6">
+                        <div class="feature-card">
+                            <div class="text-center">
+                                <div class="feature-icon">✍️</div>
+                                <h4 class="mb-3">회원가입</h4>
+                                <p class="text-muted">전체기능 사용을 위한 간단한 회원가입 입니다. </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6">
+                        <div class="feature-card">
+                            <div class="text-center">
+                                <div class="feature-icon">🔐</div>
+                                <h4 class="mb-3">로그인</h4>
+                                <p class="text-muted">전체기능 사용을 위한 로그인 입니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-5">
+                    <div class="feature-card"
+                        style="background: linear-gradient(135deg, #e0f2f1 0%, #e8f5e8 100%); color: #2e7d32;">
+                        <p class="mb-4">이 웹사이트는 다음 기술들로 구현되었습니다:</p>
+                        <div class="row">
+                            <div class="col-md-3 col-6 mb-3">
+                                <strong>Spring Boot</strong><br>
+                                <small>백엔드 프레임워크</small>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <strong>Thymeleaf</strong><br>
+                                <small>템플릿 엔진</small>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <strong>Bootstrap</strong><br>
+                                <small>UI 프레임워크</small>
+                            </div>
+                            <div class="col-md-3 col-6 mb-3">
+                                <strong>MariaDB</strong><br>
+                                <small>데이터베이스</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <th:block layout:fragment="script">
+            <!-- Explain JS -->
+            <script th:src="@{/js/explain.js}"></script>
+        </th:block>
+</body>
+
+</html>

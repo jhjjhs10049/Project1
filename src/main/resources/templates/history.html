@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/common}">
+
+<head>
+    <title>약력</title>
+
+    <th:block layout:fragment="css">
+        <!-- History CSS -->
+        <link th:href="@{/css/history.css}" rel="stylesheet">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content">
+
+        <div class="history-section">
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="display-5 mb-4">약력</h1>
+                    <p class="lead text-muted">정한준의 인생 여정을 시간순으로 소개합니다</p>
+                </div>
+
+                <div class="timeline"> <!-- 2003년 - 출생 -->
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2003</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-baby me-2"></i>출생
+                            </div>
+                            <div class="timeline-description">
+                                2003년 10월 31일, 대구광역시에서 태어났습니다.
+                                어려서부터 호기심이 많고 만드는것을 좋아했습니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag">대구 출생</span>
+                                <span class="timeline-tag">10월 31일</span>
+                            </div>
+                        </div>
+                    </div> <!-- 2010년 - 초등학교 입학 -->
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2010</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-school me-2"></i>초등학교 입학
+                            </div>
+                            <div class="timeline-description">
+                                대구의 학정초등학교에 입학하여 첫 번째 교육 여정을 시작했습니다.
+                                방과후로했던 컴퓨터 수업이 지금의 프로그래밍에 대한 관심을 불러일으켰습니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag education">초등교육</span>
+                                <span class="timeline-tag">조립</span>
+                                <span class="timeline-tag">컴퓨터</span>
+                            </div>
+                        </div>
+                    </div> <!-- 2016년 - 중학교 입학 -->
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2016</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-graduation-cap me-2"></i>중학교 입학
+                            </div>
+                            <div class="timeline-description">
+                                동평중학교에 입학하면서 보다 전문적인 학습을 시작했습니다.
+                                기술 수업을 통해 흥미를 느낀 분야가 있어, 공고 진학을 결심하게 되었습니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag education">중등교육</span>
+                                <span class="timeline-tag">컴퓨터</span>
+                                <span class="timeline-tag">기술</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2019년 - 고등학교 입학 -->
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2019</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-tools me-2"></i>경북기계공업고등학교 입학
+                            </div>
+                            <div class="timeline-description">
+                                전기 분야를 전공하며 실무 중심의 교육을 받았습니다.
+                                전기, 전자 분야에 대한 전문 지식을 습득하고 다양한 실습을 통해 기술을 익혔습니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag education">마이스터고</span>
+                                <span class="timeline-tag">자동화시스템</span>
+                                <span class="timeline-tag">옥내전기</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2021년 - 자격증 취득 -->
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2021</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-certificate me-2"></i>전문 자격증 취득
+                            </div>
+                            <div class="timeline-description">
+                                전자기기기능사(7월)와 전기기능사(12월)를 취득하며 전문 기술인으로서의 기반을 다졌습니다.
+                                이론과 실무를 결합한 전문 역량을 인정받았습니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag certificate">전자기기기능사</span>
+                                <span class="timeline-tag certificate">전기기능사</span>
+                                <span class="timeline-tag">기술자격</span>
+                            </div>
+                        </div>
+                    </div> <!-- 2021년 - 현장실습 -->
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2021</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-briefcase me-2"></i>현장실습
+                            </div>
+                            <div class="timeline-description">
+                                (주)코러싱에서 현장실습을 하며 실무를 익혔습니다.
+                                실무를 배울수 있는 좋은기회였기에 계속 근무를 결정했습니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag education">현장실습</span>
+                                <span class="timeline-tag">전기</span>
+                                <span class="timeline-tag">실무경험</span>
+                            </div>
+                        </div>
+                    </div> <!-- 2022-2024년 - 군복무 -->
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2022 - 2024</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-hard-hat me-2"></i>병역특례
+                            </div>
+                            <div class="timeline-description">
+                                다니던 회사가 병역특례 기업으로 인정되어, 산업기능요원으로서 군복무를 대신했습니다.
+                                이 기간 동안 전기 적산 및 내역을 주로 담당하였으며 공사보조도 함께 수행하였습니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag military">산업기능요원</span>
+                                <span class="timeline-tag">적산</span>
+                                <span class="timeline-tag">내역</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2025년 - 전역 및 새로운 시작 -->
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2025</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-rocket me-2"></i>전역 및 새로운 도전
+                            </div>
+                            <div class="timeline-description">
+                                군복무를 마치고 새로운 인생의 장을 열었습니다.
+                                프로그래밍과 백엔드 개발 분야에 관심을 갖고 본격적인 학습을 시작했습니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag">전역</span>
+                                <span class="timeline-tag work">진로탐색</span>
+                                <span class="timeline-tag">프로그래밍</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2025년 - 현재 -->
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2025</div>
+                            <div class="timeline-title">
+                                <i class="fas fa-code me-2"></i>개발자로의 성장
+                            </div>
+                            <div class="timeline-description">
+                                현재 백엔드 개발자가 되기 위해 Spring Boot, Java, 데이터베이스 등을 학습하고 있습니다.
+                                이 웹사이트도 그 학습 과정의 결과물 중 하나입니다.
+                            </div>
+                            <div class="timeline-tags">
+                                <span class="timeline-tag work">백엔드 개발</span>
+                                <span class="timeline-tag">Spring Boot</span>
+                                <span class="timeline-tag">Java</span>
+                                <span class="timeline-tag">현재</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

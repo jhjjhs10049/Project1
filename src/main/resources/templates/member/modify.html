@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/common}">
+
+<head>
+    <title>회원정보 수정</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/join.css}">
+    </th:block>
+</head>
+
+<div layout:fragment="content">
+    <div class="signup-container">
+        <div class="signup-header text-center">
+            <h1 class="display-5 mb-4">회원정보 수정</h1>
+            <p class="lead text-muted">회원정보를 수정하세요</p>
+        </div>
+
+        <!-- 성공/실패 메시지 -->
+        <div th:if="${result == 'modified'}" class="alert alert-success">
+            회원정보가 성공적으로 수정되었습니다.
+        </div>
+        <div th:if="${error == 'modify_failed'}" class="alert alert-danger">
+            회원정보 수정에 실패했습니다. 다시 시도해주세요.
+        </div>
+
+        <form id="modifyForm" action="/member/modify" method="post" class="signup-form">
+            <div class="mb-3">
+                <label for="mid" class="form-label fw-bold">아이디</label>
+                <input type="text" id="mid" class="form-control" 
+                       th:value="${#authentication.principal.mid}" readonly>
+                <small class="text-muted">아이디는 변경할 수 없습니다.</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="mpw" class="form-label fw-bold">새 비밀번호</label>
+                <input type="password" name="mpw" id="mpw" class="form-control" 
+                       placeholder="새 비밀번호를 입력하세요">
+                <small class="text-muted">비밀번호를 변경하지 않으려면 비워두세요.</small>
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label fw-bold">이메일</label>
+                <input type="email" name="email" id="email" class="form-control" 
+                       th:value="${#authentication.principal.email}" 
+                       required placeholder="이메일을 입력하세요">
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save me-2"></i>수정하기
+                </button>
+                <a href="/member/mypage" class="btn btn-outline-secondary btn-lg">
+                    <i class="fas fa-arrow-left me-2"></i>취소
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    document.getElementById('modifyForm').addEventListener('submit', function(e) {
+        const mpw = document.getElementById('mpw').value;
+        const email = document.getElementById('email').value;
+        
+        if (!email.trim()) {
+            alert('이메일을 입력해주세요.');
+            e.preventDefault();
+            return;
+        }
+        
+        if (mpw.trim() === '' && email === /*[[${#authentication.principal.email}]]*/ '') {
+            alert('변경할 정보를 입력해주세요.');
+            e.preventDefault();
+            return;
+        }
+        
+        if (confirm('회원정보를 수정하시겠습니까?')) {
+            return true;
+        } else {
+            e.preventDefault();
+        }
+    });
+</script>

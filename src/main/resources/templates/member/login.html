@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/common.html}">
+
+<head>
+  <title>로그인</title>
+  <th:block layout:fragment="css">
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+  </th:block>
+</head>
+
+<body>
+<div layout:fragment="content">
+<div class="login-container">
+  <div class="login-card">
+  <div class="login-header text-center">
+    <h1 class="display-5 mb-4">로그인</h1>
+    <p class="lead text-muted">서비스 이용을 위해 로그인해 주세요</p>
+  </div>
+
+
+    <div class="card-body">      <!-- 로그아웃 메시지 -->
+      <th:block th:if="${param.logout != null}">
+        <div class="alert alert-success">성공적으로 로그아웃되었습니다.</div>
+        <div class="d-grid mt-4">
+          <a href="/member/login" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt me-2"></i>로그인하러 가기
+          </a>
+        </div>
+      </th:block>      <!-- 회원정보 수정 완료 메시지 -->
+      <th:block th:if="${result == 'modified_logout'}">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle me-2"></i>회원정보가 수정되었습니다. 보안을 위해 다시 로그인해주세요.
+        </div>
+      </th:block>
+
+      <!-- 회원탈퇴 완료 메시지 -->
+      <th:block th:if="${result == 'deleted'}">
+        <div class="alert alert-success">
+          <i class="fas fa-check-circle me-2"></i>회원탈퇴가 완료되었습니다. 그동안 이용해주셔서 감사합니다.
+        </div>
+      </th:block>      <!-- 에러 메시지 -->
+      <th:block th:if="${param.error != null}">
+        <div class="alert alert-danger">
+          <th:block th:if="${param.error == 'oauth2_failed'}">로그인에 실패했습니다. 다시 시도해주세요.</th:block>
+          <th:block th:if="${param.error == 'oauth2_redirect_failed'}">로그인 후 페이지 이동에 실패했습니다.</th:block>
+          <th:block th:if="${param.error == 'deleted_account'}">
+            <i class="fas fa-exclamation-triangle me-2"></i>탈퇴한 계정입니다. 로그인할 수 없습니다.
+          </th:block>
+          <th:block th:if="${param.error != 'oauth2_failed' && param.error != 'oauth2_redirect_failed' && param.error != 'deleted_account'}">
+            로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.
+          </th:block>
+        </div>
+      </th:block>
+
+      <!-- 로그인 폼 -->
+      <form action="/member/login" method="post" th:if="${param.logout == null}">
+        <input type="hidden" name="redirect" th:value="${param.redirect}" th:if="${param.redirect != null}">
+
+        <div class="mb-3">
+          <label for="username" class="form-label fw-bold">아이디</label>
+          <input type="text" name="username" id="username" class="form-control" placeholder="아이디 입력" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label fw-bold">비밀번호</label>
+          <input type="password" name="password" id="password" class="form-control" placeholder="비밀번호 입력" required>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" name="remember-me" id="rememberMe">
+          <label class="form-check-label" for="rememberMe">자동 로그인</label>
+        </div>
+
+        <div class="d-grid gap-2 mt-4">
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fas fa-sign-in-alt me-2"></i>로그인
+          </button>
+          <a href="/member/join" class="btn btn-outline-secondary btn-lg">회원가입</a>
+          <a href="/oauth2/authorization/kakao" class="btn btn-warning btn-lg">카카오 로그인</a>
+        </div>
+      </form>
+    </div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/common}">
+
+<head>
+    <title>게시글 수정</title>
+    <th:block layout:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/board/read.css}">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content">
+        <div class="board-container">
+            <!-- 게시글 수정 헤더 (read.html 스타일) -->
+            <div class="board-header text-center">
+                <div class="container">
+                    <h1 class="display-5 mb-4">게시글 수정</h1>
+                    <p class="lead text-muted">게시글을 수정하세요</p>
+                </div>
+            </div>
+            <!-- 게시글 수정 폼 (카드형, read.html 스타일) -->
+            <div class="post-content">
+                <form th:action="@{/board/modify}" method="post" id="modifyForm">
+                    <input type="hidden" name="page" th:value="${pageRequestDTO.page}">
+                    <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+                    <input type="hidden" name="type" th:value="${pageRequestDTO.type}">
+                    <input type="hidden" name="keyword" th:value="${pageRequestDTO.keyword}">
+                    <div class="post-meta">
+                        <div class="row g-4">
+                            <div class="col-md-3">
+                                <strong><i class="fas fa-hashtag me-2"></i>번호</strong>
+                                <p class="mb-0 mt-1"><input type="text" class="form-control" th:value="${dto.bno}"
+                                        name="bno" readonly></p>
+                            </div>
+                            <div class="col-md-3">
+                                <strong><i class="fas fa-user me-2"></i>작성자</strong>
+                                <p class="mb-0 mt-1"><input type="text" class="form-control" th:value="${dto.writer}"
+                                        name="writer" readonly></p>
+                            </div>
+                            <div class="col-md-3">
+                                <strong><i class="fas fa-calendar me-2"></i>작성일</strong>
+                                <p class="mb-0 mt-1"><input type="text" class="form-control"
+                                        th:value="${#temporals.format(dto.regDate, 'yyyy-MM-dd HH:mm')}" readonly></p>
+                            </div>
+                            <div class="col-md-3">
+                                <strong><i class="fas fa-clock me-2"></i>수정일</strong>
+                                <p class="mb-0 mt-1"><input type="text" class="form-control"
+                                        th:value="${#temporals.format(dto.modDate, 'yyyy-MM-dd HH:mm')}" readonly></p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 게시글 제목 -->
+                    <h2 class="post-title">
+                        <input type="text" class="form-control title-input" name="title" th:value="${dto.title}"
+                            required>
+                    </h2>
+                    <!-- 게시글 내용 -->
+                    <div class="post-text mb-4">
+                        <textarea class="form-control" rows="10" name="content" required>[[${dto.content}]]</textarea>
+                    </div>
+                    <!-- 이미지 첨부 -->
+                    <div class="mb-4">
+                        <label class="form-label"><i class="fas fa-images me-2"></i>이미지 관리</label>
+                        <div class="upload-area">
+                            <div class="uploadHidden">
+                                <button type="button" class="uploadFileBtn btn btn-outline-secondary">
+                                    <i class="fas fa-plus me-2"></i>이미지 추가
+                                </button>
+                            </div>
+                        </div>
+                        <div class="file-preview" id="uploadResult">
+                            <div th:if="${dto.fileNames != null && dto.fileNames.size() > 0}">
+                                <h6 class="mb-3">현재 첨부된 이미지</h6>
+                                <div th:each="fileName: ${dto.fileNames}" class="file-item">
+                                    <img th:src="|/view/${fileName}|" class="img-fluid">
+                                    <button type="button" class="file-remove-btn"
+                                        onclick="window.removeFile('[[${fileName}]]', this)">×</button>
+                                    <input type="hidden" name="fileNames" th:value="${fileName}">
+                                </div>
+                            </div>
+                            <div id="newUploadResult"></div>
+                        </div>
+                    </div>
+                    <!-- 액션 버튼 -->
+                    <div class="action-buttons">
+                        <div>
+                            <a th:href="@{/board/read(bno=${param.bno}, page=${param.page}, size=${param.size})}" class="btn btn-action btn-list">
+                                <i class="fas fa-arrow-left me-2"></i>이전으로
+                            </a>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-action btn-delete me-2" id="removeBtn">
+                                <i class="fas fa-trash me-2"></i>삭제
+                            </button>
+                            <button type="submit" class="btn btn-action btn-modify" id="modifyBtn">
+                                <i class="fas fa-edit me-2"></i>수정
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="script">
+        <script>
+            window.formObj = document.querySelector("#modifyForm");
+            window.uploadResult = document.querySelector("#uploadResult");
+
+            window.removeFile = function (fileName, element) {
+                if (confirm('이 이미지를 삭제하시겠습니까?')) {
+                    element.closest('.file-item').remove();
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'removeFiles';
+                    hiddenInput.value = fileName;
+                    window.formObj.appendChild(hiddenInput);
+                }
+            };
+
+            window.removeNewFile = function (fileName, element) {
+                if (confirm('이 이미지를 삭제하시겠습니까?')) {
+                    const [uuid, originalName] = fileName.split('_', 2);
+                    removeFileToServer(uuid, originalName).then(() => {
+                        element.closest('.file-item').remove();
+                        const newUploadResult = document.querySelector("#newUploadResult");
+                        if (newUploadResult.querySelectorAll('.file-item').length === 0) {
+                            newUploadResult.innerHTML = '';
+                        }
+                    }).catch(e => {
+                        alert('파일 삭제에 실패했습니다.');
+                    });
+                }
+            };
+
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelector("#modifyBtn").addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const title = document.querySelector("input[name='title']").value.trim();
+                    const content = document.querySelector("textarea[name='content']").value.trim();
+                    if (!title) { alert('제목을 입력해주세요.'); return; }
+                    if (!content) { alert('내용을 입력해주세요.'); return; }
+                    const newUploadFiles = document.querySelectorAll("#newUploadResult img[data-src]");
+                    newUploadFiles.forEach(img => {
+                        const imgLink = img.getAttribute("data-src");
+                        const hiddenInput = document.createElement('input');
+                        hiddenInput.type = 'hidden';
+                        hiddenInput.name = 'fileNames';
+                        hiddenInput.value = imgLink;
+                        window.formObj.appendChild(hiddenInput);
+                    });
+                    window.formObj.submit();
+                });
+                document.querySelector("#removeBtn").addEventListener("click", function (e) {
+                    e.preventDefault();
+                    if (confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+                        window.formObj.action = '/board/remove';
+                        window.formObj.submit();
+                    }
+                });
+                document.querySelector(".uploadFileBtn").addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const inputFile = document.createElement("input");
+                    inputFile.setAttribute("type", "file");
+                    inputFile.setAttribute("multiple", "multiple");
+                    inputFile.setAttribute("accept", "image/*");
+                    inputFile.click();
+                    inputFile.addEventListener("change", function (e) {
+                        const files = inputFile.files;
+                        if (files.length === 0) return;
+                        const formData = new FormData();
+                        for (let i = 0; i < files.length; i++) {
+                            formData.append("files", files[i]);
+                        }
+                        uploadToServer(formData).then(result => {
+                            if (result && result.length > 0) {
+                                showUploadedFile(result);
+                            }
+                        }).catch(e => {
+                            alert('파일 업로드에 실패했습니다.');
+                        });
+                    });
+                });
+            });
+
+            async function uploadToServer(formData) {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                return await response.json();
+            }
+
+            function showUploadedFile(uploadResultArr) {
+                const newUploadResult = document.querySelector("#newUploadResult");
+                if (newUploadResult.children.length === 0) {
+                    const headerDiv = document.createElement('div');
+                    headerDiv.innerHTML = '<h6 class="mb-3 mt-4"><i class="fas fa-plus me-2"></i>새로 추가된 이미지</h6>';
+                    newUploadResult.appendChild(headerDiv);
+                }
+                for (const result of uploadResultArr) {
+                    const { uuid, fileName, link } = result;
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'file-item';
+                    fileDiv.innerHTML = `
+            <img src="/view/${link}" data-src="${uuid}_${fileName}" class="img-fluid">
+            <button type="button" class="file-remove-btn" onclick="window.removeNewFile('${uuid}_${fileName}', this)">×</button>
+        `;
+                    newUploadResult.appendChild(fileDiv);
+                }
+            }
+
+            async function removeFileToServer(uuid, fileName) {
+                const response = await fetch(`/remove/${uuid}_${fileName}`, {
+                    method: 'DELETE'
+                });
+                return await response.text();
+            }
+        </script>
+    </th:block>
+</body>
+
+</html>

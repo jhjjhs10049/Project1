@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/common}">
+
+<head>
+    <title>자기소개</title>
+
+    <th:block layout:fragment="css">
+        <!-- Intro CSS -->
+        <link th:href="@{/css/intro.css}" rel="stylesheet">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content">
+
+        <div class="intro-section">
+            <div class="container">
+                <div class="page-header">
+                    <h1 class="display-5 mb-4">자기소개</h1>
+                    <p class="lead text-muted">안녕하십니까, 정한준입니다!</p>
+                </div>
+
+                <div class="row">
+                    <!-- 개인정보 섹션 -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="intro-card">
+                            <h4 class="section-title">
+                                <i class="fas fa-user me-2"></i>개인정보
+                            </h4>
+                            <div class="text-center mb-3">
+                                <img src="/assets/hanjun.jpg" alt="정한준 프로필" class="profile-img">
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">이름:</span>
+                                <span class="info-value">정한준</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">생년월일:</span>
+                                <span class="info-value">2003년 10월 31일</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">연락처:</span>
+                                <span class="info-value">010-6741-1589</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">이메일:</span>
+                                <span class="info-value">jhjjhs10049@naver.com</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">주소:</span>
+                                <span class="info-value">대구광역시 달서구 송현로 7길9 2107-701</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">학력:</span>
+                                <span class="info-value">경북기계공업고등학교 졸업</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">병역:</span>
+                                <span class="info-value">복무만료(소집해제)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 자격증 섹션 -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="intro-card">
+                            <h4 class="section-title">
+                                <i class="fas fa-certificate me-2"></i>보유 자격증
+                            </h4>
+                            <div class="cert-item">
+                                <div class="cert-name">전자기기기능사</div>
+                                <div class="cert-detail">한국산업인력공단 | 취득일: 2021년 7월</div>
+                            </div>
+                            <div class="cert-item">
+                                <div class="cert-name">전기기능사</div>
+                                <div class="cert-detail">한국산업인력공단 | 취득일: 2021년 12월</div>
+                            </div>
+                            <div class="cert-item">
+                                <div class="cert-name">운전면허 1종보통(수동)</div>
+                                <div class="cert-detail">도로교통공단 | 취득일: 2025년 03월</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 기술 스택 섹션 -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="intro-card">
+                            <h4 class="section-title">
+                                <i class="fas fa-code me-2"></i>기술 스택
+                            </h4>
+                            <div class="skills-grid">
+                                <div class="skill-item">
+                                    <i class="fab fa-java"></i>
+                                    <div>Java</div>
+                                </div>
+                                <div class="skill-item">
+                                    <i class="fas fa-leaf"></i>
+                                    <div>Spring Boot</div>
+                                </div>
+                                <div class="skill-item">
+                                    <i class="fas fa-database"></i>
+                                    <div>MySQL/MariaDB</div>
+                                </div>
+                                <div class="skill-item">
+                                    <i class="fab fa-js-square"></i>
+                                    <div>JavaScript</div>
+                                </div>
+                                <div class="skill-item">
+                                    <i class="fab fa-html5"></i>
+                                    <div>HTML5/CSS3</div>
+                                </div>
+                                <div class="skill-item">
+                                    <i class="fab fa-git-alt"></i>
+                                    <div>Git</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 소개 및 목표 섹션 -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="intro-card">
+                            <h4 class="section-title">
+                                <i class="fas fa-heart me-2"></i>소개 및 목표
+                            </h4>
+                            <p class="mb-3">
+                                안녕하십니까! 백엔드 개발자를 꿈꾸는 정한준입니다.
+                                새로운 기술을 배우는 것을 좋아하며, 항상 사용자 중심의 서비스를
+                                개발하고자 노력하고 있습니다.
+                            </p>
+                            <p class="mb-3">
+                                현재 Spring Boot를 활용한 웹 애플리케이션 개발에 집중하고 있으며,
+                                클린 코드와 효율적인 알고리즘 구현에 관심이 많습니다.
+                            </p>
+                            <div class="contact-links">
+                                <a href="https://github.com/jhjjhs10049" target="_blank">
+                                    <i class="fab fa-github me-1"></i>GitHub
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

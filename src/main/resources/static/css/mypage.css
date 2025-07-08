@@ -1,0 +1,96 @@
+/* 마이페이지 공통 레이아웃 */
+.mypage-section {
+  min-height: calc(100vh - 120px);
+  padding: 4rem 1rem;
+  background-color: #f8f9fa;
+  animation: fadeInUp 0.8s ease forwards;
+  opacity: 0;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  animation: fadeInDown 0.8s ease 0.2s forwards;
+  opacity: 0;
+}
+
+/* 사용자 카드 */
+.mypage-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease 0.4s forwards;
+}
+
+.profile-avatar i {
+  color: #adb5bd;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #495057;
+}
+
+.info-value {
+  color: #212529;
+  font-weight: 500;
+}
+
+.btn-custom {
+  padding: 0.6rem 1.5rem;
+  font-weight: 500;
+  border-radius: 10px;
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header {
+    padding: 2rem 1rem;
+  }
+}
